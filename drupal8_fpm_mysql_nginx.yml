@@ -115,8 +115,7 @@ objects:
               name: init-sites-volume
               image: drupal:8.6.7-fpm
               command: ['/bin/bash', '-c']
-              # args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R']
-              args: ['cp /var/www/html/sites/default/default.settings.php /var/www/html/sites/default/settings.php; cp -r /var/www/html/sites /data/; chown www-data:www-data /data/ -R']
+              args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R']
               volumeMounts:
               - mountPath: /data
                 name: vol-drupal
@@ -124,6 +123,8 @@ objects:
             - 
               image: drupal:8.6.7-fpm
               name: drupal
+              command: ['/bin/bash', '-c']
+              args: ['cp ./sites/default/default.settings.php ./sites/default/settings.php']
               ports: 
                 - 
                   containerPort: 9000
