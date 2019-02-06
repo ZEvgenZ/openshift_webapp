@@ -140,42 +140,30 @@ objects:
   #     nginx: nginx
   - apiVersion: v1
     kind: Service
-    metadata:
-      name:  drupal-fpm-service
+    metadata: 
+      name: drupal-fpm-service
       namespace: production-cloud
-      creationTimestamp: null
-    spec:
-      selector:
-        # app:  Selector Label
-        app: drupal-fpm-service
-        tier: backend
-      # portalIP: ""
-      # type:  ClusterIP
-      # sessionAffinity: None
-      ports:
-      - name:  fpm
-        port:  9000
-        protocol: TCP
-        targetPort:  fpm
-        # nodePort: 0
+    spec: 
+      ports: 
+        - 
+          name: fpm
+          port: 9000
+          protocol: TCP
+      selector: 
+        app: drupal
   - apiVersion: v1
     kind: Service
-    metadata:
-      name:  mysql-service
+    metadata: 
+      name: drupal-mysql-service
       namespace: production-cloud
-      creationTimestamp: null
-    spec:
-      selector:
-        # app:  Selector Label
-        app: mysql-service
-      # type:  ClusterIP
-      # sessionAffinity: None
-      ports:
-      - name:  mysql
-        port:  3306
-        protocol: TCP
-        # targetPort:  drupal8-db
-        # nodePort: 0
+    spec: 
+      ports: 
+        - 
+          name: mysql
+          port: 3306
+          protocol: TCP
+      selector: 
+        app: drupal-mysql
   - apiVersion: v1
     kind: Service
     metadata:
@@ -184,18 +172,12 @@ objects:
       creationTimestamp: null
     spec:
       selector:
-        # app:  Selector Label
         app: nginx
       type: LoadBalancer
-      # portalIP: ""
-      # type:  ClusterIP
-      # sessionAffinity: None
       ports:
       - name:  nginx
         port:  8081
         protocol: TCP
-        # targetPort:  8081
-        # nodePort: 0
     # status: 
     #   loadBalancer: ""
   - apiVersion: v1
@@ -215,41 +197,33 @@ objects:
   - apiVersion: extensions/v1beta1
     kind: Deployment
     metadata: 
-      # labels:
-      matchLabels: 
-        app: drupal8-fpm
-        tier: backend
-        track: stable
-      name: drupal8-fpm
+      labels: 
+        app: drupal
+      name: drupal
       namespace: production-cloud
     spec: 
       replicas: 1
       template: 
         metadata: 
           labels: 
-            app: drupal8-fpm
-            tier: backend
-            track: stable
+            app: drupal
         spec: 
           initContainers:
             -
               name: init-sites-volume
               image: drupal:8.6.7-fpm
-              # image: zevgenz/drupal-cfg
               command: ['/bin/bash', '-c']
               # args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R']
-              args: ['cp -r /var/www/html/ /data/; chown www-data:www-data /data/ -R; cp ./sites/default/default.settings.php ./sites/default/settings.php']
+              args: ['cp -r /var/www/html/ /data/; chown www-data:www-data /data/ -R; cp ./sites/default/default.settings.php ./sites/default/settings.php ']
               volumeMounts:
               - mountPath: /data
                 name: vol-drupal
           containers: 
             - 
               image: drupal:8.6.7-fpm
-              # image: zevgenz/drupal-cfg
-              name: drupal8-fpm
+              name: drupal
               ports: 
                 - 
-                  name: fpm
                   containerPort: 9000
               volumeMounts:
               - mountPath: /var/www/html/modules
@@ -272,14 +246,14 @@ objects:
   - apiVersion: extensions/v1beta1
     kind: Deployment
     metadata: 
-      name: mysql-master
+      name: drupal-mysql
       namespace: production-cloud
     spec: 
       replicas: 1
       template: 
         metadata: 
           labels: 
-            app: mysql-master
+            app: drupal-mysql
         spec: 
           containers: 
             - 
@@ -300,8 +274,7 @@ objects:
                   name: MYSQL_DATABASE
                   value: ${MYSQL_DATABASE}
               image: "mysql:5.7"
-              # name: cont-drupal-mysql
-              name: mysql-master
+              name: cont-drupal-mysql
               ports: 
                 - 
                   containerPort: 3306
@@ -331,12 +304,12 @@ objects:
           labels: 
             app: nginx
         spec: 
-          initContainers:
-            -
-              name: init-nginx
-              image: zevgenz/nginx-cfg:latest
-              command: ['/bin/bash', '-c']
-              args: ['chmod g+rwx /var/cache/nginx /var/run /var/log/nginx']
+          # initContainers:
+          #   -
+          #     name: init-nginx
+          #     image: zevgenz/nginx-cfg:latest
+          #     command: ['/bin/bash', '-c']
+          #     args: ['chmod g+rwx /var/cache/nginx /var/run /var/log/nginx']
               # volumeMounts:
               # - mountPath: /data
               #   name: vol-drupal
@@ -347,25 +320,5 @@ objects:
               ports: 
                 - 
                   containerPort: 8081
-              # volumeMounts:
-              # - mountPath: /var/www/html
-              #   name: vol-drupal
-              # - mountPath: /var/www/html/modules
-              #   name: vol-drupal
-              #   subPath: modules
-              # - mountPath: /var/www/html/profiles
-              #   name: vol-drupal
-              #   subPath: profiles
-              # - mountPath: /var/www/html/sites
-              #   name: vol-drupal
-              #   subPath: sites
-              # - mountPath: /var/www/html/themes
-              #   name: vol-drupal
-              #   subPath: themes
-          # volumes:
-          #   - 
-          #     name: vol-drupal
-          #     persistentVolumeClaim: 
-          #       claimName: drupal-pvc
 restartPolicy: "Always"
 dnsPolicy: "ClusterFirst"
