@@ -40,104 +40,6 @@ objects:
       resources: 
         requests: 
           storage: 5Gi
-  # - apiVersion: v1
-  #   kind: Pod
-  #   metadata:
-  #     name: mysql-master
-  #     namespace: production-cloud
-  #   spec:
-  #     containers:
-  #       - env:
-  #         # - name: "MYSQL_MASTER_USER"
-  #         #   value: "${MYSQL_MASTER_USER}"
-  #         # - name: "MYSQL_MASTER_PASSWORD"
-  #         #   value: "${MYSQL_MASTER_PASSWORD}"
-  #         - name: "MYSQL_USER"
-  #           value: "${MYSQL_USER}"
-  #         - name: "MYSQL_PASSWORD"
-  #           value: "${MYSQL_PASSWORD}"
-  #         - name: "MYSQL_DATABASE"
-  #           value: "${MYSQL_DATABASE}"
-  #         # - name: "MYSQL_ROOT_PASSWORD"
-  #         #   value: "${MYSQL_ROOT_PASSWORD}"
-  #         # image: <Image Name>
-  #         image: centos/mysql-57-centos7:latest
-  #         name: "mysql"
-  #         ports:
-  #           # - containerPort: <Container port number>
-  #           #    protocol: <Protocol>
-  #           - containerPort: 3306
-  #             protocol: TCP
-  #   labels:
-  #     #  redis: <Communication Type>
-  #     mysql: master
-  # - apiVersion: v1
-  #   kind: Pod
-  #   metadata:
-  #     name: mysql-slave
-  #     namespace: production-cloud
-  #   spec:
-  #     containers:
-  #       - env:
-  #         # - name: "MYSQL_MASTER_USER"
-  #         #   value: "${MYSQL_MASTER_USER}"
-  #         # - name: "MYSQL_MASTER_PASSWORD"
-  #         #   value: "${MYSQL_MASTER_PASSWORD}"
-  #         - name: "MYSQL_USER"
-  #           value: "${MYSQL_USER}"
-  #         - name: "MYSQL_PASSWORD"
-  #           value: "${MYSQL_PASSWORD}"
-  #         - name: "MYSQL_DATABASE"
-  #           value: "${MYSQL_DATABASE}"
-  #         # - name: "MYSQL_ROOT_PASSWORD"
-  #         #   value: "${MYSQL_ROOT_PASSWORD}"
-  #         # image: <Image Name>
-  #         image: centos/mysql-57-centos7:latest
-  #         name: "mysql"
-  #         ports:
-  #           # - containerPort: <Container port number>
-  #           #    protocol: <Protocol>
-  #           - containerPort: 3306
-  #             protocol: TCP
-  #   labels:
-  #     #  redis: <Communication Type>
-  #     mysql: slave
-  # - apiVersion: v1
-  #   kind: Pod
-  #   metadata:
-  #     name: drupal8-fpm
-  #     namespace: production-cloud
-  #   spec:
-  #     containers:
-  #       - 
-  #         image: drupal:8.6.7-fpm
-  #         # image: zevgenz/drupal-cfg
-  #         name: drupal-fpm
-  #         ports:
-  #             - containerPort: 9000
-  #               protocol: TCP
-  #   labels:
-  #     #  redis: <Communication Type>
-  #     drupal: drupal-fpm
-  # - apiVersion: v1
-  #   kind: Pod
-  #   metadata:
-  #     name: nginx
-  #     namespace: production-cloud
-  #   spec:
-  #     containers:
-  #       - env:
-  #         - name: SERVERNAME
-  #           # value: "${SERVERNAME}"
-  #           value: drupal8-fpm
-  #         image: zevgenz/nginx-cfg:latest
-  #         name: nginx
-  #         ports:
-  #           - containerPort: 8081
-  #             protocol: TCP
-  #   labels:
-  #     #  redis: <Communication Type>
-  #     nginx: nginx
   - apiVersion: v1
     kind: Service
     metadata: 
@@ -214,7 +116,7 @@ objects:
               image: drupal:8.6.7-fpm
               command: ['/bin/bash', '-c']
               # args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R']
-              args: ['cp -r /var/www/html/ /data/; chown www-data:www-data /data/ -R; cp ./sites/default/default.settings.php ./sites/default/settings.php ']
+              args: ['cp /var/www/html/sites/default/default.settings.php /var/www/html/sites/default/settings.php; cp -r /var/www/html/sites /data/; chown www-data:www-data /data/ -R']
               volumeMounts:
               - mountPath: /data
                 name: vol-drupal
