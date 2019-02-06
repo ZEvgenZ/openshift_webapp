@@ -236,12 +236,12 @@ objects:
               name: init-sites-volume
               image: drupal:8.6.7-fpm
               # image: zevgenz/drupal-cfg
-              # command: ['/bin/bash', '-c']
+              command: ['/bin/bash', '-c']
               # args: ['cp -r /var/www/html/sites/ /data/; chown www-data:www-data /data/ -R']
-              # args: ['cp -r /var/www/html/ /data/; chown www-data:www-data /data/ -R; cp ./sites/default/default.settings.php ./sites/default/settings.php']
-              volumeMounts:
-              - mountPath: /data
-                name: vol-drupal
+              args: ['cp -r /var/www/html/ /data/; chown www-data:www-data /data/ -R; cp ./sites/default/default.settings.php ./sites/default/settings.php']
+              # volumeMounts:
+              # - mountPath: /data
+              #   name: vol-drupal
           containers: 
             - 
               image: drupal:8.6.7-fpm
